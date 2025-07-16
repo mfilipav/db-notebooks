@@ -6,7 +6,6 @@ on:
 env:
   # Replace this value with your workspace instance name.
   # DATABRICKS_HOST: https://<your-workspace-instance-name>
-  # https://<databricks-instance>/?o=6280049833385130
   DATABRICKS_HOST: https://dbc-c712b0f6-8b25.cloud.databricks.com/?o=1569146086898189
 
 jobs:
