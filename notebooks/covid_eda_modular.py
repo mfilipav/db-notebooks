@@ -15,8 +15,21 @@
 
 # COMMAND ----------
 
-data_path = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/hospitalizations/covid-hospitalizations.csv'
-print(f'Data path: {data_path}')
+# notebook params, passed with `notebook_task.base_parameters`
+default_data_path = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/hospitalizations/covid-hospitalizations.csv'
+default_table_version = "v0"  # Update this when logic changes significantly
+
+# In your Databricks notebook
+dbutils.widgets.text("data_path", default_data_path, "Path to COVID hospitalizations data")
+
+dbutils.widgets.text("table_version", default_table_version, "Table version")
+
+# Access the parameters
+data_path = dbutils.widgets.get("data_path")
+table_version = dbutils.widgets.get("table_version")
+
+print(f"Data path: {data_path}")
+print(f"Table version: {table_version}")
 
 # COMMAND ----------
 
@@ -45,12 +58,15 @@ display(df)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC #### Save to Delta Lake
+# MAGIC #### Save to Delta Lake (and update the table version if needed!)
 
 # COMMAND ----------
 
 # Write to Delta Lake
-df.write.mode('overwrite').saveAsTable('covid_stats')
+# Define at the top of notebook
+table_name = f"covid_stats_{table_version}"
+
+df.write.mode('overwrite').option("comment", "Updated data processing logic, new filtering criteria").saveAsTable(table_name)
 
 # COMMAND ----------
 
@@ -60,12 +76,12 @@ df.write.mode('overwrite').saveAsTable('covid_stats')
 # COMMAND ----------
 
 # Using Databricks visualizations and data profiling
-display(spark.table('covid_stats'))
+# display(spark.table(table_name))
 
 # COMMAND ----------
 
 # Using python
-df.toPandas().plot(figsize=(13,6), grid=True).legend(loc='upper left');
+# df.toPandas().plot(figsize=(13,6), grid=True).legend(loc='upper left');
 
 # COMMAND ----------
 
